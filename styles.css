@@ -7,11 +7,28 @@
 body {
   height: 100vh;
   background-color: cyan;
+  
+}
+
+#root {
+  width: 75%;
+  margin: 10% auto 0;
+  /* border: red 3px solid; */
+  text-align: center;
+  font-size: 0; /* removes spaces in parent*/
+ 
+  /* display: flex; */
 }
 
 .walls {
+  display: inline-block;
   width: 2em;
   height: 2em;
-  background-color: black;
-
+  /* border: 1px green solid; */
+  font-size: 1rem; /* rerset font size to get rid of spaces*/
 }
+
+.fill {
+  background-color: black;
+}
+
