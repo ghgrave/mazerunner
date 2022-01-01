@@ -1,15 +1,19 @@
 const MAZE_SIZE = 7;
 
 // creates Block class to be used to build maze
-function Block(x, y, w) {
+const Block = (x, y, t, r, b, l, w) => {
   return {
     x, // row location = int 0 -> maze_size
     y, // column location = int 0 -> maze_size
+    t, // what is located top of current position
+    r, // what is located right of current position
+    b, // what is located bottom of current position
+    l, // what is located left of current position
     w, // wall = 0 -> no wall, 1 -> wall
     c: 0, // content = 0 -> no content,  other num -> item
     d: false, // default -> not a door
-    setContent: (item) => (this.c = item),
-    getContent: () => this.c,
+    setContent: (item) => (c = item),
+    getContent: () => c,
   };
 }
 
@@ -28,7 +32,7 @@ const BUILD_MAZE = (count, num) => {
         (i % 2 === 0 && j % 2 === 0) // default, every other odd row/col is a wall
           ? 1 // is a wall
           : 0; // is not a wall
-      MAZE[i][j] = Block(i, j, wall);
+      MAZE[i][j] = Block(i, j, [i-1, j], [i, j+1], [i+1, j], [i, j-1], wall);
     }
   }
   return num !== 1 ? BUILD_MAZE((count += 1), num - 2) : MAZE;
