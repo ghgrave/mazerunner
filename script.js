@@ -1,28 +1,22 @@
-const MAZE_SIZE = 9;
+const MAZE_SIZE = 15;
 
-const MAZE_WALLS = Array.from(Array(MAZE_SIZE), () => Array(MAZE_SIZE).fill(1));
-
+// creates Block class to be used to build maze
 function Block(x, y, w) {
-  this.x = x; // row location = int 0 -> maze_size
-  this.y = y; // column location = int 0 -> maze_size
-  this.w = w; // wall = 0 -> no wall, 1 -> wall
-  this.c = 0; // content = 0 -> no content,  other num -> item
-  this.setContent = (item) => (this.c = item);
-  this.getContent = () => this.c;
-}
-
-function block(x, y, w) {
   return {
-    x,
-    y,
-    w,
-    c: 0,
+    x, // row location = int 0 -> maze_size
+    y, // column location = int 0 -> maze_size
+    w, // wall = 0 -> no wall, 1 -> wall
+    c: 0, // content = 0 -> no content,  other num -> item
+    d: false, // default -> not a door
     setContent: (item) => (this.c = item),
     getContent: () => this.c,
   };
 }
 
-let maze = [...MAZE_WALLS];
+// makes a default 2d-array MAZE filled with nulls
+const MAZE = Array.from(Array(MAZE_SIZE), () => Array(MAZE_SIZE));
+
+// builds the maze by assigning values using Block Class
 const BUILD_MAZE = (count, num) => {
   for (let i = count; i < num; i++) {
     for (let j = 0; j < num; j++) {
@@ -34,28 +28,46 @@ const BUILD_MAZE = (count, num) => {
         (i % 2 === 0 && j % 2 === 0) // default, every other odd row/col is a wall
           ? 1 // is a wall
           : 0; // is not a wall
-
-      // maze[i][j] = new Block(i, j, wall);
-      maze[i][j] = block(i, j, wall);
+      MAZE[i][j] = Block(i, j, wall);
     }
   }
-  return num !== 1 ? BUILD_MAZE((count += 1), num - 2) : maze;
+  return num !== 1 ? BUILD_MAZE((count += 1), num - 2) : MAZE;
 };
 
+// translates values into actual walls based on w value
 const DISPLAY_WALLS = (mazeArr) => {
   let walls = "";
   for (let i = 0; i < mazeArr.length; i++) {
     for (let j = 0; j < mazeArr.length; j++) {
       walls += `<div class="walls ${
-        mazeArr[i][j].w === 1 ? "fill" : ""
+        mazeArr[i][j].w === 1 && !mazeArr[i][j].d ? "fill" : ""
       }"></div>`;
     }
     walls += "<br />";
   }
+
   return walls;
 };
 
-console.log(maze);
+// randomly assigns a block as the entrance to the maze
+const DOOR = () => {
+  // randomly chooses which row to assign door
+  let a = Math.floor(Math.random() * (MAZE_SIZE - 1));
+  // depending on row, then col chosen to place door
+  let b =
+    a === 0 || a === MAZE_SIZE - 1 // if 0 or last column
+      ? Math.floor(Math.random() * (MAZE_SIZE - 2)) + 1 // rand num between 1 and size of maze - 2
+      : Math.random() < 0.5 // otherwise, column can only be 0 or
+      ? 0
+      : MAZE_SIZE - 1;
+  return [a, b];
+};
+
+console.log(MAZE);
 BUILD_MAZE(0, MAZE_SIZE);
-DISPLAY_WALLS(maze);
-$("#root").html(DISPLAY_WALLS(maze));
+// determines which block will be entrace
+let tempDoor = DOOR();
+MAZE[tempDoor[0]][tempDoor[1]].d = true;
+
+// places maze in the DOM
+$("#root").html(DISPLAY_WALLS(MAZE));
