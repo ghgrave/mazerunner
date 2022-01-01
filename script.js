@@ -1,4 +1,4 @@
-const MAZE_SIZE = 15;
+const MAZE_SIZE = 7;
 
 // creates Block class to be used to build maze
 function Block(x, y, w) {
@@ -63,11 +63,24 @@ const DOOR = () => {
   return [a, b];
 };
 
-console.log(MAZE);
+const INT_WALLS = () => {
+  return MAZE.map((arr) => {
+    return arr.filter((el) => {
+      return el.w === 0 && el.d === false;
+    });
+  });
+};
+
+// console.log(MAZE);
 BUILD_MAZE(0, MAZE_SIZE);
 // determines which block will be entrace
 let tempDoor = DOOR();
 MAZE[tempDoor[0]][tempDoor[1]].d = true;
+
+// create a 2d array of all possible spaces which can become interior walls
+// converted from 2d -> 1d
+let int_wall_arr = [].concat(...INT_WALLS());
+console.log(int_wall_arr);
 
 // places maze in the DOM
 $("#root").html(DISPLAY_WALLS(MAZE));
